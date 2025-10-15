@@ -10,6 +10,9 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from pymongo import MongoClient
 
+# -----------------------------
+# Configuration
+# -----------------------------
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
 FFMPEG_PATH = os.environ.get("FFMPEG_PATH", "ffmpeg")
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -30,10 +33,13 @@ HLS_ROOT.mkdir(parents=True, exist_ok=True)
 processes: Dict[str, subprocess.Popen] = {}
 lock = threading.Lock()
 
+# -----------------------------
+# Utility functions
+# -----------------------------
 def _ensure_stream_dir(stream_key: str) -> Path:
     d = HLS_ROOT / stream_key
     d.mkdir(parents=True, exist_ok=True)
-    # Clean old files to avoid stale segments
+    # Clean old files
     for f in d.glob("*"):
         try:
             f.unlink()
@@ -64,10 +70,27 @@ def start_ffmpeg(rtsp_url: str, stream_key: str):
         "-hls_segment_filename", str(stream_dir / "seg_%04d.ts"),
         str(playlist),
     ]
-    # Start process
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return proc
 
+# -----------------------------
+# New routes for health & root
+# -----------------------------
+@app.route("/")
+def home():
+    return jsonify({
+        "message": "🎥 Live Video Overlays Backend is Running",
+        "status": "OK",
+        "docs": ["/api/overlays", "/api/stream/start", "/api/stream/stop", "/health"]
+    })
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+# -----------------------------
+# Stream Control Endpoints
+# -----------------------------
 @app.route("/api/stream/start", methods=["POST"])
 def api_stream_start():
     data = request.get_json(force=True)
@@ -97,12 +120,11 @@ def api_stream_stop():
         processes.pop(stream_key, None)
     return jsonify({"status": "stopped"}), 200
 
+# -----------------------------
+# Serve HLS files
+# -----------------------------
 @app.route("/hls/<path:subpath>")
 def serve_hls(subpath: str):
-    """
-    Serve HLS files from scripts/backend/hls/<stream_key>/...
-    Example: /hls/default/index.m3u8
-    """
     parts = Path(subpath)
     stream_key = parts.parts[0]
     file_rel = Path(*parts.parts[1:])
@@ -111,6 +133,9 @@ def serve_hls(subpath: str):
         return jsonify({"error": "stream not found"}), 404
     return send_from_directory(directory, file_rel.name if file_rel.name else "index.m3u8", as_attachment=False)
 
+# -----------------------------
+# Overlay CRUD Endpoints
+# -----------------------------
 def serialize(doc: Dict[str, Any]) -> Dict[str, Any]:
     doc["_id"] = str(doc["_id"])
     return doc
@@ -127,7 +152,6 @@ def create_overlay():
     data = request.get_json(force=True)
     if "stream_key" not in data:
         return jsonify({"error": "stream_key required"}), 400
-    # Minimal validation
     overlay = {
         "stream_key": data["stream_key"],
         "type": data.get("type", "text"),
@@ -166,7 +190,10 @@ def delete_overlay(id: str):
     overlays_col.delete_one({"_id": ObjectId(id)})
     return jsonify({"status": "deleted"})
 
+# -----------------------------
+# Main
+# -----------------------------
 if __name__ == "__main__":
-    # Ensure HLS root exists
     HLS_ROOT.mkdir(parents=True, exist_ok=True)
     app.run(host=HOST, port=PORT, debug=True)
+
