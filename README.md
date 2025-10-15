@@ -3,28 +3,139 @@
 *Automatically synced with your [v0.app](https://v0.app) deployments*
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/ridhima-bhardwajs-projects/v0-live-video-overlays)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/NFkrsvrBK67)
+# 🎥 Live Video Overlays
 
-## Overview
+Add and manage real-time text or logo overlays on live RTSP video streams.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+---
 
-## Deployment
+## 🚀 Live Demo
 
-Your project is live at:
+- **Frontend (Next.js):** [https://v0-live-video-overlays.vercel.app](https://v0-live-video-overlays.vercel.app)  
+- **Backend (Flask):** [https://tsp-overlay-backend.onrender.com](https://tsp-overlay-backend.onrender.com)  
+- **GitHub Repository:** [https://github.com/Ridhima-bhardwaj/live-video-overlays](https://github.com/Ridhima-bhardwaj/live-video-overlays)
 
-**[https://vercel.com/ridhima-bhardwajs-projects/v0-live-video-overlays](https://vercel.com/ridhima-bhardwajs-projects/v0-live-video-overlays)**
+---
 
-## Build your app
+## 🧠 Overview
 
-Continue building your app on:
+This project allows users to:
+- Stream live video from any RTSP source.
+- Add, position, and resize **custom overlays** (text or image) on top of the video.
+- Manage overlays through full **CRUD APIs** (Create, Read, Update, Delete).
 
-**[https://v0.app/chat/projects/NFkrsvrBK67](https://v0.app/chat/projects/NFkrsvrBK67)**
+The backend (Flask) converts the RTSP stream into an HLS feed using **FFmpeg**,  
+while the frontend (Next.js) plays it using a browser video player.
 
-## How It Works
+---
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## 🧩 Tech Stack
+
+| Layer | Technology |
+|--------|-------------|
+| Frontend | Next.js (React + TypeScript + Tailwind CSS) |
+| Backend | Flask (Python 3) |
+| Database | MongoDB Atlas |
+| Streaming | FFmpeg (RTSP → HLS conversion) |
+| Deployment | Vercel (frontend) + Render (backend) |
+
+---
+
+## ⚙️ Architecture Flow
+
+[RTSP Source] 
+      ↓
+[Flask Backend + FFmpeg] → Converts RTSP → HLS (.m3u8)
+      ↓
+[MongoDB Atlas] → Stores overlay data (CRUD)
+      ↓
+[Next.js Frontend] → Fetches overlays via API + renders video + overlays
+
+---
+
+## 🧪 Demo RTSP Stream
+
+You can test with a public stream:
+```
+rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov
+```
+
+---
+
+## 🔧 Setup (Local Development)
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Ridhima-bhardwaj/live-video-overlays.git
+cd live-video-overlays
+```
+
+### 2. Frontend Setup
+```bash
+npm install
+npm run dev
+```
+Runs on **http://localhost:3000**
+
+### 3. Backend Setup
+```bash
+cd scripts/backend
+pip install -r requirements.txt
+python app.py
+```
+Backend runs on **http://localhost:5000**
+
+---
+
+## 🌐 Environment Variables
+
+Create a `.env.local` file in the frontend root:
+
+```bash
+NEXT_PUBLIC_API_BASE=https://tsp-overlay-backend.onrender.com
+NEXT_PUBLIC_HLS_BASE=https://tsp-overlay-backend.onrender.com/hls
+```
+
+Backend requires:
+
+```bash
+MONGO_URI=<your MongoDB Atlas URI>
+FFMPEG_PATH=/usr/bin/ffmpeg  # optional, depends on your OS
+```
+
+---
+
+## 🧠 Key Features
+
+- 🎥 Play live video from any RTSP stream (converted to HLS)
+- 🧱 Add text or logo overlays dynamically
+- ✏️ Move, resize, and customize overlays
+- 💾 CRUD API for overlays and settings
+- ☁️ Deployed and production-ready
+
+---
+
+## 📚 Documentation
+
+- [API Documentation → API_DOCS.md](./API_DOCS.md)
+- In-app `/docs` route explains setup and usage.
+
+---
+
+## 📦 Deliverables Checklist
+
+✅ Code Repository  
+✅ API Documentation (CRUD + Stream)  
+✅ User Guide (Setup + Usage)  
+✅ Working Deployment Links (Frontend + Backend)  
+
+---
+
+## 👩‍💻 Author
+
+**Ridhima Bhardwaj**  
+Final Year B.Tech (CSE)  
+Frontend & Full-Stack Developer  
+[GitHub Profile](https://github.com/Ridhima-bhardwaj)
+
+---
