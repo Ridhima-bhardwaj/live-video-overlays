@@ -44,6 +44,7 @@ export default function DocsPage() {
         </p>
 
         <h2>REST API</h2>
+
         <h3>List Overlays</h3>
         <pre>
           <code>GET /api/overlays?stream_key=&lt;key&gt;</code>
@@ -51,24 +52,23 @@ export default function DocsPage() {
 
         <h3>Create Overlay</h3>
         <pre>
-          <code>
-            POST /api/overlays Content-Type: application/json
-            {{
-              stream_key: "default",
-              type: "text", // or "image"
-              x: 24,
-              y: 24,
-              width: 200,
-              height: 60,
-              opacity: 1,
-              text: "Live",
-              color: "#fff",
-              bgColor: "rgba(0,0,0,0.2)",
-              fontSize: 20,
-              url: "https://example.com/logo.png",
-              alt: "logo",
-            }}
-          </code>
+          <code>{`POST /api/overlays
+Content-Type: application/json
+{
+  "stream_key": "default",
+  "type": "text", // or "image"
+  "x": 24,
+  "y": 24,
+  "width": 200,
+  "height": 60,
+  "opacity": 1,
+  "text": "Live",
+  "color": "#fff",
+  "bgColor": "rgba(0,0,0,0.2)",
+  "fontSize": 20,
+  "url": "https://example.com/logo.png",
+  "alt": "logo"
+}`}</code>
         </pre>
 
         <h3>Update Overlay</h3>
@@ -83,12 +83,18 @@ export default function DocsPage() {
 
         <h3>Stream Control</h3>
         <pre>
-          <code>
-            POST /api/stream/start Content-Type: application/json
-            {{ stream_key: "default", rtsp_url: "rtsp://..." }}
-            POST /api/stream/stop Content-Type: application/json
-            {{ stream_key: "default" }}
-          </code>
+          <code>{`POST /api/stream/start
+Content-Type: application/json
+{
+  "stream_key": "default",
+  "rtsp_url": "rtsp://..."
+}
+
+POST /api/stream/stop
+Content-Type: application/json
+{
+  "stream_key": "default"
+}`}</code>
         </pre>
 
         <h2>Notes</h2>
@@ -98,5 +104,6 @@ export default function DocsPage() {
         </ul>
       </div>
     </main>
-  )
+  );
 }
+
